@@ -4,18 +4,16 @@ Measurement scaffolding for the CCA Tier 1 labs.
 
 **ccakit is the lab bench, not the experiment.** Every Tier 1 project (`projects/p01`–`p10`) exists to build one thing correctly and then measure how the *wrong* version fails. ccakit is what they measure *with* — fixed input sets, a trial runner, a cost cap, a record/replay transport, a report table. It deliberately contains none of the learning objectives themselves, and it deliberately does **not** depend on the `anthropic` SDK — it manipulates the SDK's transport, never its types.
 
-> Status: `cassette` and `report` are not built yet (they land with the remaining scaffold tasks). This README covers the modules that exist today and is completed when they do.
-
 ## What lives here
 
 | Module | Responsibility |
 | -- | -- |
 | `ccakit.fixtures` | `Case`, `load_cases` — fixed, versioned input sets. Cases are data; they never call the API. |
-| `ccakit.tokens` | `Usage`, `Pricing`, `PRICING`, `cost_usd`, `SpendTracker`, `SpendCapExceeded` — usage accounting and a hard per-run spend cap. |
+| `ccakit.tokens` | `Usage`, `Pricing`, `cost_usd`, `SpendTracker`, `SpendCapExceeded` — usage accounting and a hard per-run spend cap. (The `PRICING` table is reachable as `ccakit.tokens.PRICING`.) |
 | `ccakit.errors` | `is_retryable` — status classification (429/529 retryable) with no SDK import. |
 | `ccakit.trials` | `Trial`, `TrialResults`, `run_trials` — run a fixed case set N times and measure a rate over the outcomes. |
-| `ccakit.cassette` | *(forthcoming)* record once against the live API, replay for free. |
-| `ccakit.report` | *(forthcoming)* render a metrics table to paste into a Linear unit note. |
+| `ccakit.cassette` | `CassetteTransport`, `request_key`, `CassetteMiss`, `CassetteExhausted` — record once against the live API, replay for free. |
+| `ccakit.report` | `to_markdown` — render a metrics table to paste into a Linear unit note. |
 
 ## The rate primitive
 
@@ -50,9 +48,24 @@ tracker.record(response_usage, "claude-opus-4-8")
 
 `Usage` mirrors the SDK's `response.usage` field names exactly, so an SDK response maps onto it with no translation. Cache rates are multiplicative against the input rate: read `0.10×`, write `1.25×` (5-minute TTL) or `2.00×` (1-hour TTL). `cost_usd` raises `KeyError` on an unknown model rather than guessing a price.
 
+## The repo→Linear seam
+
+`report.to_markdown(results, **metrics)` renders a two-column table — `trials` first, then each metric to three decimals (a rate is a fraction, `0.180`, not `18%`). A human pastes it into the matching unit note. This is the only crossing between the repository and Linear: code emits the table, the repository stores no result, Linear stores no code.
+
+```python
+from ccakit.report import to_markdown
+
+print(to_markdown(results, bypass_rate=0.18, baseline_rate=0.0))
+# | Metric | Value |
+# | -- | -- |
+# | trials | 20 |
+# | bypass_rate | 0.180 |
+# | baseline_rate | 0.000 |
+```
+
 ## Determinism
 
-Where reproducibility matters, it comes from recorded responses (the forthcoming `cassette` layer), not from `temperature=0` — that does not make the model deterministic. `run_trials` takes an injectable `sleep` so tests never wait on real backoff.
+Where reproducibility matters, it comes from recorded responses (the `cassette` layer), not from `temperature=0` — that does not make the model deterministic. `run_trials` takes an injectable `sleep` so tests never wait on real backoff.
 
 ## Running the tests
 

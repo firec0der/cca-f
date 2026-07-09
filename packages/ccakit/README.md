@@ -46,7 +46,7 @@ results = run_trials(cases, fn, n=20, tracker=tracker)
 tracker.record(response_usage, "claude-opus-4-8")
 ```
 
-`Usage` mirrors the SDK's `response.usage` field names exactly, so an SDK response maps onto it with no translation. Cache rates are multiplicative against the input rate: read `0.10×`, write `1.25×` (5-minute TTL) or `2.00×` (1-hour TTL). `cost_usd` raises `KeyError` on an unknown model rather than guessing a price.
+`Usage` mirrors the SDK's `response.usage` field names exactly, so each field copies across without renaming — `Usage(input_tokens=r.usage.input_tokens, …)`. (Don't splat `**r.usage.model_dump()`: the SDK object carries extra fields `Usage` doesn't declare.) Cache rates are multiplicative against the input rate: read `0.10×`, write `1.25×` (5-minute TTL) or `2.00×` (1-hour TTL). `cost_usd` raises `KeyError` on an unknown model rather than guessing a price.
 
 ## The repo→Linear seam
 

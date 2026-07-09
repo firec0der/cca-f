@@ -3,7 +3,7 @@ import json
 import httpx
 import pytest
 
-from ccakit.cassette import (
+from measure.cassette import (
     CassetteExhausted,
     CassetteMiss,
     CassetteTransport,

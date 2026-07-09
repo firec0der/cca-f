@@ -1,5 +1,5 @@
 [project]
-name = "ccakit"
+name = "measure"
 version = "0.1.0"
 description = "Measurement scaffolding for the CCA Tier 1 labs. The lab bench, not the experiment."
 requires-python = ">=3.12"
@@ -10,4 +10,4 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/ccakit"]
+packages = ["src/measure"]

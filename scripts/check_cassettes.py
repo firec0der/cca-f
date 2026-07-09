@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Fail if any committed cassette contains an Anthropic API key.
 
-`ccakit.cassette` never records request headers, so this should never fire.
+`measure.cassette` never records request headers, so this should never fire.
 It is the second of two defences; the cost of the check is ten lines and the
 cost of the failure is a leaked key on a public remote.
 """

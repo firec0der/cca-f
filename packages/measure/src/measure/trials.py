@@ -12,9 +12,9 @@ from collections.abc import Callable, Iterable, Sequence
 from dataclasses import dataclass
 from typing import Any
 
-from ccakit.errors import is_retryable
-from ccakit.fixtures import Case
-from ccakit.tokens import SpendTracker
+from measure.errors import is_retryable
+from measure.fixtures import Case
+from measure.tokens import SpendTracker
 
 
 @dataclass(frozen=True)

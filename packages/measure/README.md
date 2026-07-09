@@ -1,27 +1,27 @@
-# ccakit
+# measure
 
 Measurement scaffolding for the CCA Tier 1 labs.
 
-**ccakit is the lab bench, not the experiment.** Every Tier 1 project (`projects/p01`–`p10`) exists to build one thing correctly and then measure how the *wrong* version fails. ccakit is what they measure *with* — fixed input sets, a trial runner, a cost cap, a record/replay transport, a report table. It deliberately contains none of the learning objectives themselves, and it deliberately does **not** depend on the `anthropic` SDK — it manipulates the SDK's transport, never its types.
+**`measure` is the lab bench, not the experiment.** Every Tier 1 project (`projects/p01`–`p10`) exists to build one thing correctly and then measure how the *wrong* version fails. `measure` is the shared toolkit they measure *with* — fixed input sets, a trial runner, a cost cap, a record/replay transport, a report table. It deliberately contains none of the learning objectives themselves, and it deliberately does **not** depend on the `anthropic` SDK — it manipulates the SDK's transport, never its types.
 
 ## What lives here
 
 | Module | Responsibility |
 | -- | -- |
-| `ccakit.fixtures` | `Case`, `load_cases` — fixed, versioned input sets. Cases are data; they never call the API. |
-| `ccakit.tokens` | `Usage`, `Pricing`, `cost_usd`, `SpendTracker`, `SpendCapExceeded` — usage accounting and a hard per-run spend cap. (The `PRICING` table is reachable as `ccakit.tokens.PRICING`.) |
-| `ccakit.errors` | `is_retryable` — status classification (429/529 retryable) with no SDK import. |
-| `ccakit.trials` | `Trial`, `TrialResults`, `run_trials` — run a fixed case set N times and measure a rate over the outcomes. |
-| `ccakit.cassette` | `CassetteTransport`, `request_key`, `CassetteMiss`, `CassetteExhausted` — record once against the live API, replay for free. |
-| `ccakit.report` | `to_markdown` — render a metrics table to paste into a Linear unit note. |
+| `measure.fixtures` | `Case`, `load_cases` — fixed, versioned input sets. Cases are data; they never call the API. |
+| `measure.tokens` | `Usage`, `Pricing`, `cost_usd`, `SpendTracker`, `SpendCapExceeded` — usage accounting and a hard per-run spend cap. (The `PRICING` table is reachable as `measure.tokens.PRICING`.) |
+| `measure.errors` | `is_retryable` — status classification (429/529 retryable) with no SDK import. |
+| `measure.trials` | `Trial`, `TrialResults`, `run_trials` — run a fixed case set N times and measure a rate over the outcomes. |
+| `measure.cassette` | `CassetteTransport`, `request_key`, `CassetteMiss`, `CassetteExhausted` — record once against the live API, replay for free. |
+| `measure.report` | `to_markdown` — render a metrics table to paste into a Linear unit note. |
 
 ## The rate primitive
 
 The four measuring labs (p02, p03, p06, p08) all ask the same question: run a fixed case set many times, count how often some predicate holds.
 
 ```python
-from ccakit.fixtures import load_cases
-from ccakit.trials import run_trials
+from measure.fixtures import load_cases
+from measure.trials import run_trials
 
 cases = load_cases("p03/refund-probes", root=Path("cases"))
 results = run_trials(cases, guard_fn, n=20)
@@ -38,7 +38,7 @@ bypass_rate = results.rate(lambda t: t.value == "bypassed")
 `run_trials` motivating incident: a prior workflow exhausted its API spend limit mid-run and died. Pass a `SpendTracker` and the run aborts the moment it crosses the cap.
 
 ```python
-from ccakit.tokens import SpendTracker, Usage
+from measure.tokens import SpendTracker, Usage
 
 tracker = SpendTracker(max_spend_usd=2.00)   # every lab overrides this explicitly
 results = run_trials(cases, fn, n=20, tracker=tracker)
@@ -53,7 +53,7 @@ tracker.record(response_usage, "claude-opus-4-8")
 `report.to_markdown(results, **metrics)` renders a two-column table — `trials` first, then each metric to three decimals (a rate is a fraction, `0.180`, not `18%`). A human pastes it into the matching unit note. This is the only crossing between the repository and Linear: code emits the table, the repository stores no result, Linear stores no code.
 
 ```python
-from ccakit.report import to_markdown
+from measure.report import to_markdown
 
 print(to_markdown(results, bypass_rate=0.18, baseline_rate=0.0))
 # | Metric | Value |
@@ -73,7 +73,7 @@ From the repository root:
 
 ```bash
 uv sync --all-packages
-uv run pytest packages/ccakit -q
+uv run pytest packages/measure -q
 ```
 
 A bare `uv sync` uninstalls workspace members; always pass `--all-packages`.

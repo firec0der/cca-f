@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
-"""Fail if a Tier 2/3 build imports or depends on `ccakit`.
+"""Fail if a Tier 2/3 build imports or depends on `measure`.
 
-Tier 1 may import ccakit; Tier 2/3 may not. Portfolio builds must remain
+Tier 1 may import measure; Tier 2/3 may not. Portfolio builds must remain
 `git subtree split`-able into standalone repositories.
 
 Import detection walks the AST rather than grepping text, for precision: it
-will not flag "ccakit" appearing in a comment, docstring, or unrelated string
+will not flag "measure" appearing in a comment, docstring, or unrelated string
 literal. That precision comes with a known, accepted gap: the AST walk only
-catches *static* imports (`import ccakit`, `from ccakit... import ...`).
-Dynamic imports (`importlib.import_module("ccakit")`, `__import__("ccakit")`)
+catches *static* imports (`import measure`, `from measure... import ...`).
+Dynamic imports (`importlib.import_module("measure")`, `__import__("measure")`)
 are calls, not `Import`/`ImportFrom` nodes, so they are NOT caught. This guard
 targets accidental coupling, not deliberate evasion, so that gap is out of
 scope by design.
@@ -22,11 +22,11 @@ import sys
 import tomllib
 from pathlib import Path
 
-FORBIDDEN = "ccakit"
+FORBIDDEN = "measure"
 PORTFOLIO_GLOBS = ("projects/s*", "projects/capstone")
 
 # PEP 508: the distribution name is the leading run of name characters.
-# Naive `.split("=")[0]` leaves the `>` on `ccakit>=0.1` and misses the violation.
+# Naive `.split("=")[0]` leaves the `>` on `measure>=0.1` and misses the violation.
 _DIST_NAME = re.compile(r"^[A-Za-z0-9]([A-Za-z0-9._-]*[A-Za-z0-9])?")
 
 

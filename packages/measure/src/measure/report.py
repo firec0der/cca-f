@@ -7,7 +7,7 @@ note comparable.
 
 from __future__ import annotations
 
-from ccakit.trials import TrialResults
+from measure.trials import TrialResults
 
 
 def to_markdown(results: TrialResults, **metrics: float) -> str:

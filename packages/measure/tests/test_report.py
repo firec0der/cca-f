@@ -1,6 +1,6 @@
-from ccakit.fixtures import Case
-from ccakit.report import to_markdown
-from ccakit.trials import Trial, TrialResults
+from measure.fixtures import Case
+from measure.report import to_markdown
+from measure.trials import Trial, TrialResults
 
 
 def _results(n: int) -> TrialResults:

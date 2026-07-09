@@ -1,8 +1,8 @@
 import pytest
 
-from ccakit.fixtures import Case
-from ccakit.tokens import SpendCapExceeded, SpendTracker, Usage
-from ccakit.trials import run_trials
+from measure.fixtures import Case
+from measure.tokens import SpendCapExceeded, SpendTracker, Usage
+from measure.trials import run_trials
 
 
 class FakeAPIError(Exception):

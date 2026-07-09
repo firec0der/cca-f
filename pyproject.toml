@@ -12,7 +12,7 @@ members = ["packages/*", "projects/p*"]
 exclude = ["projects/s*", "projects/capstone"]
 
 [tool.uv.sources]
-ccakit = { workspace = true }
+measure = { workspace = true }
 
 [dependency-groups]
 dev = ["pytest>=8.3", "ruff>=0.6", "httpx>=0.27"]
@@ -30,4 +30,4 @@ markers = ["live: hits the real Anthropic API; deselected by default"]
 testpaths = ["packages", "projects", "scripts"]
 
 [tool.ruff.lint.isort]
-known-first-party = ["ccakit"]
+known-first-party = ["measure"]

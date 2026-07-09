@@ -1,6 +1,6 @@
 import pytest
 
-from ccakit.tokens import (
+from measure.tokens import (
     CACHE_WRITE_MULTIPLIER_1H,
     PRICING,
     SpendCapExceeded,

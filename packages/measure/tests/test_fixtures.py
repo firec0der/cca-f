@@ -2,7 +2,7 @@ import json
 
 import pytest
 
-from ccakit.fixtures import Case, load_cases
+from measure.fixtures import Case, load_cases
 
 
 def test_load_cases_reads_a_json_array(tmp_path):

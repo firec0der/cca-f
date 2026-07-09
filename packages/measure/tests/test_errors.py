@@ -1,4 +1,4 @@
-from ccakit.errors import is_retryable
+from measure.errors import is_retryable
 
 
 class FakeAPIError(Exception):
